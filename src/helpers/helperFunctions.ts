@@ -7,3 +7,10 @@ export const getListingIdFromUrl = (url: string) => {
   const parts = url.split("/");
   return parts[parts.length - 1];
 };
+
+export const formatPrice = (price: number) => {
+  return `$${price.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+};

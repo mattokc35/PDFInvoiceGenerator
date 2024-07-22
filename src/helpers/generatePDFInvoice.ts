@@ -1,6 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Listing } from "@/types/listing";
+import { formatPrice } from "./helperFunctions";
 
 export const generatePDF = (
   listingData: Listing,
@@ -12,7 +13,7 @@ export const generatePDF = (
   const doc = new jsPDF();
   const invoiceNumber = `INV-${Math.floor(Math.random() * 1000000)}`; //generate a unique invoice number
   const date = new Date().toLocaleDateString();
-  const balanceDue = `$${listingData.sellingPrice.toFixed(2)}`;
+  const balanceDue = formatPrice(listingData.sellingPrice);
 
   doc.setProperties({
     title: `Garage Listing Invoice for ${name}`,
@@ -51,7 +52,7 @@ export const generatePDF = (
   //table for item and pricing
   const columns = ["Item", "Quantity", "Price"];
   const rows = [
-    [listingData.listingTitle, "1", `$${listingData.sellingPrice.toFixed(2)}`],
+    [listingData.listingTitle, "1", formatPrice(listingData.sellingPrice)],
   ];
 
   autoTable(doc, {
@@ -70,12 +71,12 @@ export const generatePDF = (
     foot: [
       [
         { content: "Subtotal", colSpan: 2 },
-        `$${listingData.sellingPrice.toFixed(2)}`,
+        formatPrice(listingData.sellingPrice),
       ],
       [{ content: "Tax", colSpan: 2 }, `$0.00`],
       [
         { content: "Total", colSpan: 2, styles: { fontStyle: "bold" } },
-        `$${listingData.sellingPrice.toFixed(2)}`,
+        formatPrice(listingData.sellingPrice),
       ],
     ],
     footStyles: {
@@ -138,7 +139,7 @@ export const generatePDF = (
   //check if the images section fits on the current page
   if (imagesStartY > pageHeight - 40) {
     doc.addPage();
-    imagesStartY = 20; // Reset startY for new page
+    imagesStartY = 20; //reset startY for new page
   }
 
   if (listingData.imageUrls && listingData.imageUrls.length > 0) {
